@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { refreshStore } from './mainActions';
 import { isVersionCompatible } from './discoverServices';
+import {getUrlParams, getEmbeddedParams, setUrlParams, setEmbeddedParams} from '@folio/stripes-components/util/paramUtils';
 
 
 export const stripesShape = PropTypes.shape({
@@ -57,8 +59,18 @@ class Stripes {
     return new Stripes(Object.assign({}, this, extraProps));
   }
 
-  extendStripesProps(Module, extraProps = {}) {
+  extendStripesProps(Module, extraProps={}) {
     return props => <Module {...props} stripes={this.clone(extraProps)} />;
+  }
+
+  getParams(props={}) {
+    const getParamsImpl = this.embedded ? getEmbeddedParams : getUrlParams;
+    return getParamsImpl(props);
+  }
+
+  setParams(props={}, params={}) {
+    const setParamsImpl = this.embedded ? setEmbeddedParams.bind(this) : setUrlParams;
+    return setParamsImpl(props, params);
   }
 
 }
