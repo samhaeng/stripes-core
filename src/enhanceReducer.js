@@ -9,6 +9,7 @@ function enhanceReducer(reducer) {
       {
         okapi: state.okapi,
         discovery: state.discovery,
+        stripes: state.stripes,
       }
     );
 }
