@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import queryString from 'query-string';
 import { refreshStore } from './mainActions';
 import { isVersionCompatible } from './discoverServices';
-import {getUrlParams, getEmbeddedParams, setUrlParams, setEmbeddedParams} from '@folio/stripes-components/util/paramUtils';
-
+import { setParams } from './stripesActions';
 
 export const stripesShape = PropTypes.shape({
   logger: PropTypes.shape({
@@ -14,10 +14,17 @@ export const stripesShape = PropTypes.shape({
   // XXX more
 });
 
+// Symbols used for psudo private methods
+const _getUrlParams = Symbol();
+const _getEmbeddedParams = Symbol();
+const _setUrlParams = Symbol();
+const _setEmbeddedParams = Symbol();
 
 class Stripes {
+
   constructor(properties) {
     Object.assign(this, properties);
+    console.log(this);
   }
 
   hasPerm(perm) {
@@ -64,13 +71,46 @@ class Stripes {
   }
 
   getParams(props={}) {
-    const getParamsImpl = this.embedded ? getEmbeddedParams : getUrlParams;
+    const getParamsImpl = this.embedded ? this[_getEmbeddedParams] : this[_getUrlParams];
     return getParamsImpl(props);
   }
 
-  setParams(props={}, params={}) {
-    const setParamsImpl = this.embedded ? setEmbeddedParams.bind(this) : setUrlParams;
-    return setParamsImpl(props, params);
+  setParams(props={}, newParams={}) {
+    props.stripes.store.dispatch(setParams(this.getParams(props), newParams));
+    const setParamsImpl = this.embedded ? this[_setEmbeddedParams] : this[_setUrlParams];
+    return setParamsImpl(props, newParams);
+  }
+
+  /* psudo-private methods */
+
+  [_getUrlParams](props) {
+    return props.location.search ? queryString.parse(props.location.search) : {};      
+  }
+
+  [_getEmbeddedParams](props) {
+    return props.stripes.store.getState().stripes.embedded || {};      
+  }
+
+  [_setUrlParams](props, params) {
+    const location = props.location;
+    let query = location.query;
+    if (query === undefined)
+      query = queryString.parse(location.search);
+  
+    const allParams = Object.assign({}, query, params);
+    const keys = Object.keys(allParams);
+  
+    let url = location.pathname;
+    if (keys.length) {
+      url += `?${keys.map(key => `${key}=${encodeURIComponent(allParams[key])}`).join('&')}`;
+    }
+  
+    props.history.push(url);
+  }
+
+  [_setEmbeddedParams](props) {
+    // leaves the url alone, but trigers the reloading of the route as is.
+    props.history.replace(props.location.pathname);
   }
 
 }
