@@ -1,9 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-// import globalCssReset from '!style!css!normalize.css';
-import globalSystemCss from '!style-loader!css-loader!./global.css'; // eslint-disable-line
-
 import css from './MainContainer.css';
 
 const propTypes = {

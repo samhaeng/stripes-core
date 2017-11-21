@@ -1,12 +1,12 @@
-@import '../../variables.css';
+@import '@folio/stripes-components/lib/variables.css';
 
-.navDivider{
+.navDivider {
   border-left: 1px solid #bbb;
   height: 28px;
 }
 
-@media(--mediumDown){
-  .hideMed{
+@media (--mediumDown) {
+  .hideMed {
     display: none;
   }
 }
