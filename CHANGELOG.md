@@ -1,10 +1,16 @@
 # Change history for stripes-core
 
+## 2.9.0 (IN PROGRESS)
+
+* Add documentation on [how to add a permission to a user from the command-line](doc/adding-permissions.md#add-a-permission-to-a-user). Fixes STCOR-112.
+* Restore open-in-new-tab to primary navigation. Fixes STCOR-113.
+* Fix Webpack lint errors. Fixes STCOR-115.
+
 ## [2.8.0](https://github.com/folio-org/stripes-core/tree/v2.8.0) (2017-11-20)
 [Full Changelog](https://github.com/folio-org/stripes-core/compare/v2.7.0...v2.8.0)
 
 * Improved navigation facilities for modules:
-  * Changes to URL parameters can now be made by assigning to an anointed stirpes-connect resource. Fixes STRIPES-452, though docuumentation is still needed.
+  * Changes to URL parameters can now be made by assigning to an anointed stripes-connect resource. Fixes STRIPES-452, though documentation is still needed.
   * Assignment to special parameter `_path` within the anointed stripes-connect resource will change the URL path. Fixes STCOR-105.
   * Setting a query parameter in the anointed stripes-connect resource to null removes it from the URL. Fixes STCOR-106.
 * Improvements to WebPack interactions:
