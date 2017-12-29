@@ -18,6 +18,7 @@ import NavDivider from './NavDivider';
 import NavGroup from './NavGroup';
 import Breadcrumbs from './Breadcrumbs';
 import NavIcon from './NavIcon';
+import CurrentApp from './CurrentApp';
 import NotificationsDropdown from './Notifications/NotificationsDropdown';
 
 import NavDropdownMenu from './NavDropdownMenu';
@@ -195,17 +196,12 @@ class MainNav extends Component {
               <polygon style={{ fill: '#999' }} points="13 24.8 1.2 13.5 3.2 11.3 13 20.6 22.8 11.3 24.8 13.5 " />
             </svg>
           </a>
-          <NavButton id="clickable-home" href="/">
-            <NavIcon color="#fdae35" />
-            <span className={css.brandingLabel} style={{ fontSize: '22px', lineHeight: '1rem' }}>FOLIO</span>
-          </NavButton>
           {selectedApp &&
-            <NavButton onClick={this.handleNavigation(selectedApp)} href={this.lastVisited[name] || selectedApp.home} title={selectedApp.displayName} key="selected-app">
-              <NavIcon color="#61f160" />
-              <span className={css.linkLabel}>
-                {selectedApp.displayName}
-              </span>
-            </NavButton>
+            <CurrentApp
+              label={selectedApp.displayName}
+              title={selectedApp.displayName}
+              key="selected-app"
+            />
           }
           {
             stripes.hasPerm('settings.enabled') && pathname.startsWith('/settings') &&
