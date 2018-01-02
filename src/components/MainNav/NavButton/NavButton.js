@@ -1,53 +1,54 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Link from 'react-router-dom/Link';
+import classNames from 'classnames';
+import AppIcon from '@folio/stripes-components/lib/AppIcon';
+import { withRouter } from 'react-router-dom';
 import css from './NavButton.css';
 
 const propTypes = {
   href: PropTypes.string,
-  title: PropTypes.string,
+  label: PropTypes.string,
+  icon: PropTypes.oneOfType([
+    PropTypes.element,
+  ]),
   onClick: PropTypes.func,
-  onKeyDown: PropTypes.func,
-  children: PropTypes.node.isRequired,
-  md: PropTypes.string, // eslint-disable-line
   selected: PropTypes.bool,
 };
 
-function NavButton(props) {
-  function getClass() {
-    const base = css.navButton;
-    const hide = props.md === 'hide' ? css.hideMed : '';
-    return `${base} ${hide}`;
-  }
+const NavButton = withRouter(({ history, label, selected, onClick, href, icon }) => {
+  /**
+   * Root classes
+   */
+  const rootClasses = classNames(
+    css.navButton,
+    { [css.selected]: selected },
+  );
 
-  const { children, md, bsRole, bsClass, href, ...buttonProps } = props; // eslint-disable-line
+  /**
+   * Icon
+   */
+  const getIcon = () => (<span className={css.icon}>{icon || <AppIcon focusable={false} />}</span>);
 
-  if (props.href) {
-    return (
-      <Link
-        className={getClass()}
-        to={href}
-        {...buttonProps}
-      >
-        {props.selected && <div className={css.selected} />}
-        {props.children}
-      </Link>
-    );
-  }
+  /**
+   * On click
+   */
+  const clickEvent = () => {
+    if (onClick) {
+      onClick();
+    } else if (href) {
+      history.push(href);
+    }
+  };
 
   return (
-    <button
-      type="button"
-      className={getClass()}
-      {...buttonProps}
-    >
-      <span>
-        {props.selected && <div className={css.selected} />}
-        {children}
+    <button className={rootClasses} onClick={clickEvent}>
+      <span className={css.inner}>
+        { getIcon() }
+        { label && <span className={css.label}>{label}</span>}
       </span>
     </button>
   );
-}
+});
 
 NavButton.propTypes = propTypes;
 
