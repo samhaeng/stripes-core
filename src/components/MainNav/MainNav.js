@@ -176,12 +176,7 @@ class MainNav extends Component {
 
       if (!stripes.hasPerm(perm)) return null;
 
-      return (<NavButton id={navId} selected={pathname.startsWith(entry.route)} onClick={this.handleNavigation(entry)} href={this.lastVisited[name] || entry.home || entry.route} title={entry.displayName} key={entry.route}>
-        <NavIcon color="#61f160" />
-        <span className={css.linkLabel}>
-          {entry.displayName}
-        </span>
-      </NavButton>);
+      return (<NavButton label={entry.displayName} id={navId} selected={pathname.startsWith(entry.route)} onClick={this.handleNavigation(entry)} href={this.lastVisited[name] || entry.home || entry.route} title={entry.displayName} key={entry.route} />);
     });
 
     let firstNav;
@@ -197,7 +192,7 @@ class MainNav extends Component {
             </svg>
           </a>
           {selectedApp &&
-            <CurrentApp
+            <NavButton
               label={selectedApp.displayName}
               title={selectedApp.displayName}
               key="selected-app"
@@ -206,7 +201,7 @@ class MainNav extends Component {
           {
             stripes.hasPerm('settings.enabled') && pathname.startsWith('/settings') &&
               <NavButton href={this.lastVisited.x_settings || '/settings'}>
-                <NavIcon color="#7d3fb3" />
+                <NavIcon />
                 <span>Settings</span>
               </NavButton>
           }
@@ -215,9 +210,7 @@ class MainNav extends Component {
     } else {
       firstNav = (
         <NavGroup>
-          <NavButton md="hide">
-            <NavIcon color="#fdae35" />
-          </NavButton>
+          <NavButton md="hide" />
           <Breadcrumbs linkArray={breadcrumbArray} />
         </NavGroup>
       );
@@ -231,10 +224,7 @@ class MainNav extends Component {
             {menuLinks}
             {
               !stripes.hasPerm('settings.enabled') ? '' : (
-                <NavButton id="clickable-settings" selected={pathname.startsWith('/settings')} href={this.lastVisited.x_settings || '/settings'}>
-                  <NavIcon color="#7d3fb3" />
-                  <span>Settings</span>
-                </NavButton>
+                <NavButton label="Settings" id="clickable-settings" selected={pathname.startsWith('/settings')} href={this.lastVisited.x_settings || '/settings'} />
               )
             }
             <NavDivider md="hide" />
@@ -242,7 +232,7 @@ class MainNav extends Component {
           </NavGroup>
           <NavGroup className={css.smallAlignRight}>
             <Dropdown open={this.state.userMenuOpen} id="UserMenuDropDown" onToggle={this.toggleUserMenu} pullRight >
-              <NavButton data-role="toggle" title="User Menu" aria-haspopup="true" aria-expanded={this.state.userMenuOpen}><NavIcon icon={userIcon} /></NavButton>
+              <NavButton data-role="toggle" title="User Menu" aria-haspopup="true" aria-expanded={this.state.userMenuOpen} />
               <NavDropdownMenu data-role="menu" onToggle={this.toggleUserMenu} aria-label="User Menu">{userDD}</NavDropdownMenu>
             </Dropdown>
           </NavGroup>
