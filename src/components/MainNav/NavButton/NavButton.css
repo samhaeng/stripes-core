@@ -1,7 +1,7 @@
 @import '@folio/stripes-components/lib/variables.css';
 
 .navButton {
-  margin: 0 8px;
+  margin: 0 5px;
   height: 44px;
   color: rgba(0, 0, 0, 0.61);
   outline: 0;
@@ -24,12 +24,32 @@
 
     & .icon {
       opacity: 1;
+
+      & svg {
+        fill: var(--primary);
+      }
     }
   }
 }
 
+/* No active bar - primarily used for popover icons with no label */
+.navButton.noSelectedBar::before {
+  display: none;
+}
+
 .icon {
   opacity: 0.75;
+  height: 24px;
+
+  & img,
+  & svg {
+    height: 24px;
+    width: 24px;
+  }
+
+  & svg {
+    fill: #999;
+  }
 }
 
 .icon,
@@ -88,6 +108,10 @@
 
 .navButton:active .inner {
   color: rgb(255, 255, 255);
+
+  & svg {
+    fill: #fff;
+  }
 }
 
 .navButton:active .inner::before {
