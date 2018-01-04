@@ -64,19 +64,6 @@
   }
 }
 
-/**
- * Profile placeholder
- */
-.profilePlaceholder {
-  background-color: rgba(0, 0, 0, 0.05);
-  height: 24px;
-
-  & svg {
-    width: 24px;
-    height: 24px;
-  }
-}
-
 @media (--mediumDown) {
   .brandingLabel {
     display: none;
