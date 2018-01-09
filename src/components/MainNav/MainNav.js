@@ -130,8 +130,6 @@ class MainNav extends Component {
 
   render() {
     const { stripes, location: { pathname } } = this.props;
-    const currentUser = stripes.user ? stripes.user.user : undefined;
-    const currentPerms = stripes.user ? stripes.user.perms : undefined;
     const selectedApp = modules.app.find(entry => pathname.startsWith(entry.route));
 
     const menuLinks = modules.app.map((entry) => {
@@ -141,7 +139,16 @@ class MainNav extends Component {
 
       if (!stripes.hasPerm(perm)) return null;
 
-      return (<NavButton label={entry.displayName} id={navId} selected={pathname.startsWith(entry.route)} onClick={this.handleNavigation(entry)} href={this.lastVisited[name] || entry.home || entry.route} title={entry.displayName} key={entry.route} />);
+      return (
+        <NavButton
+          label={entry.displayName}
+          id={navId}
+          selected={pathname.startsWith(entry.route)}
+          onClick={this.handleNavigation(entry)}
+          href={this.lastVisited[name] || entry.home || entry.route}
+          title={entry.displayName}
+          key={entry.route}
+        />);
     });
 
     let firstNav;
@@ -157,18 +164,13 @@ class MainNav extends Component {
             </svg>
           </a>
           {selectedApp &&
-            <NavButton
-              label={selectedApp.displayName}
-              title={selectedApp.displayName}
-              key="selected-app"
+            <CurrentApp
+              currentApp={selectedApp}
             />
           }
           {
             stripes.hasPerm('settings.enabled') && pathname.startsWith('/settings') &&
-              <NavButton href={this.lastVisited.x_settings || '/settings'}>
-                <NavIcon />
-                <span>Settings</span>
-              </NavButton>
+            <NavButton label="Settings" href={this.lastVisited.x_settings || '/settings'} />
           }
         </NavGroup>
       );
@@ -189,7 +191,12 @@ class MainNav extends Component {
             {menuLinks}
             {
               !stripes.hasPerm('settings.enabled') ? '' : (
-                <NavButton label="Settings" id="clickable-settings" selected={pathname.startsWith('/settings')} href={this.lastVisited.x_settings || '/settings'} />
+                <NavButton
+                  label="Settings"
+                  id="clickable-settings"
+                  selected={pathname.startsWith('/settings')}
+                  href={this.lastVisited.x_settings || '/settings'}
+                />
               )
             }
           </NavGroup>
@@ -200,6 +207,7 @@ class MainNav extends Component {
             { this.props.stripes.hasPerm('notify.item.get,notify.item.put,notify.collection.get') && (<NavDivider md="hide" />) }
             <MyProfile
               onLogout={this.logout}
+              stripes={stripes}
             />
           </NavGroup>
         </NavGroup>

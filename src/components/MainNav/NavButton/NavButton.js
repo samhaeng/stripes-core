@@ -49,13 +49,15 @@ const NavButton = withRouter(({ history, label, title, selected, onClick, href, 
     }
   };
 
+  const Element = typeof onClick === 'function' || href ? 'button' : 'span';
+
   return (
-    <button title={title} className={rootClasses} onClick={clickEvent}>
+    <Element title={title} className={rootClasses} onClick={clickEvent}>
       <div className={css.inner}>
         { displayIcon }
         { label && <span className={css.label}>{label}</span>}
       </div>
-    </button>
+    </Element>
   );
 });
 
