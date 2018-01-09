@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import AppIcon from '@folio/stripes-components/lib/AppIcon';
+import Badge from '@folio/stripes-components/lib/Badge';
 import { withRouter } from 'react-router-dom';
 import css from './NavButton.css';
 
@@ -13,6 +14,10 @@ const propTypes = {
   icon: PropTypes.oneOfType([
     PropTypes.element,
   ]),
+  badge: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
   onClick: PropTypes.func,
   selected: PropTypes.bool,
   noSelectedBar: PropTypes.bool,
@@ -22,7 +27,7 @@ const defaultProps = {
   noSelectedBar: false,
 };
 
-const NavButton = withRouter(({ history, label, title, selected, onClick, href, icon, noSelectedBar, className }) => {
+const NavButton = withRouter(({ history, label, title, selected, onClick, href, icon, noSelectedBar, className, badge }) => {
   /**
    * Root classes
    */
@@ -54,6 +59,7 @@ const NavButton = withRouter(({ history, label, title, selected, onClick, href, 
   return (
     <Element title={title} className={rootClasses} onClick={clickEvent}>
       <div className={css.inner}>
+        { badge && (<Badge color="red" className={css.badge}>{badge}</Badge>) }
         { displayIcon }
         { label && <span className={css.label}>{label}</span>}
       </div>
