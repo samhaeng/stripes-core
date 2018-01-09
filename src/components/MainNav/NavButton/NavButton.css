@@ -99,7 +99,7 @@ button.navButton .inner::before {
   left: 0;
   right: 0;
   background: transparent;
-  border-radius: 6px;
+  border-radius: calc(var(--radius) * 1.2);
   z-index: 1;
 }
 
