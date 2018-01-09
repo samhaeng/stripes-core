@@ -73,6 +73,18 @@
 
 .inner {
   padding: 4px 0;
+  position: relative;
+}
+
+/**
+ * Badge
+ */
+.navButton .badge {
+  font-size: 10px;
+  position: absolute;
+  top: 0;
+  right: -1px;
+  z-index: 5;
 }
 
 /**
