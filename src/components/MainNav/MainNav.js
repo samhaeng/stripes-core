@@ -17,12 +17,9 @@ import NavButton from './NavButton';
 import NavDivider from './NavDivider';
 import NavGroup from './NavGroup';
 import Breadcrumbs from './Breadcrumbs';
-import NavIcon from './NavIcon';
 import CurrentApp from './CurrentApp';
 import MyProfile from './MyProfile';
 import NotificationsDropdown from './Notifications/NotificationsDropdown';
-
-import NavDropdownMenu from './NavDropdownMenu';
 
 if (!Array.isArray(modules.app) || modules.app.length < 1) {
   throw new Error('At least one module of type "app" must be enabled.');
@@ -61,27 +58,44 @@ class MainNav extends Component {
     this.store = props.stripes.store;
     this.logout = this.logout.bind(this);
     this.lastVisited = {};
-    this.unsub = null;
     this.queryValues = null;
 
-    const moduleList = modules.app.concat({
+    this.moduleList = modules.app.concat({
       route: '/settings',
       module: '@folio/x_settings',
     });
 
-    for (const entry of moduleList) {
-      if (props.location.pathname.startsWith(entry.route)) {
-        this.subscribeToQueryChanges(entry);
-      }
-    }
-
     props.history.listen((hist) => {
-      for (const entry of moduleList) {
+      for (const entry of this.moduleList) {
         if (hist.pathname === entry.route || hist.pathname.startsWith(`${entry.route}/`)) {
           const name = entry.module.replace(/^@folio\//, '');
           this.lastVisited[name] = `${hist.pathname}${hist.search}`;
         }
       }
+    });
+  }
+
+  componentDidUpdate() {
+    for (const entry of this.moduleList) {
+      if (this.props.location.pathname.startsWith(entry.route)) {
+        const name = entry.module.replace(/^@folio\//, '');
+        if (this.moduleName !== name) {
+          if (this.unsubscribe) {
+            this.unsubscribe();
+          }
+          if (entry.queryResource) {
+            this.unsubscribe = this.subscribeToQueryChanges(entry);
+          }
+          this.moduleName = name;
+        }
+      }
+    }
+  }
+
+  toggleUserMenu() {
+    const isOpen = this.state.userMenuOpen;
+    this.setState({
+      userMenuOpen: !isOpen,
     });
   }
 
@@ -94,9 +108,7 @@ class MainNav extends Component {
   }
 
   subscribeToQueryChanges(moduleInfo) {
-    if (this.unsub) this.unsub();
-    if (!moduleInfo.queryResource) return;
-    this.unsub = this.store.subscribe(() => {
+    return this.store.subscribe(() => {
       const previousQueryValues = this.queryValues;
       // This is not DRY, as it was expressed already in LocalResource is stripes-connect,
       // And in Root.js in stripes-core. Both State Keys should be derived from a common mechanism.
@@ -110,22 +122,13 @@ class MainNav extends Component {
         let url = allParams._path || location.pathname;
         delete allParams._path;
 
-        const nonNull = Object.keys(allParams)
-          .filter(k => allParams[k] != null)
-          .reduce((r, k) => Object.assign(r, { [k]: allParams[k] }), {});
+        const nonNull = Object.keys(allParams).filter(k => allParams[k] != null).reduce((r, k) => Object.assign(r, { [k]: allParams[k] }), {});
         if (Object.keys(nonNull).length) {
           url += `?${queryString.stringify(nonNull)}`;
         }
         this.props.history.replace(url);
       }
     });
-  }
-
-  handleNavigation(entry) {
-    return () => {
-      this.subscribeToQueryChanges(entry);
-      this.props.history.push(this.lastVisited[name] || entry.home || entry.route);
-    };
   }
 
   render() {
