@@ -8,7 +8,8 @@ import { withRouter } from 'react-router';
 import localforage from 'localforage';
 
 import { modules } from 'stripes-config'; // eslint-disable-line
-
+import metaData from 'stripes-metadata'; // eslint-disable-line
+console.log('metaData', metaData);
 import { clearOkapiToken, clearCurrentUser } from '../../okapiActions';
 import { resetStore } from '../../mainActions';
 

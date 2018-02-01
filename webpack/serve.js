@@ -8,6 +8,7 @@ const webpackHotMiddleware = require('webpack-hot-middleware');
 const connectHistoryApiFallback = require('connect-history-api-fallback');
 const StripesConfigPlugin = require('./stripes-config-plugin');
 const StripesBrandingPlugin = require('./stripes-branding-plugin');
+const StripesMetaDataPlugin = require('./stripes-metadata-plugin');
 const applyWebpackOverrides = require('./apply-webpack-overrides');
 
 const cwd = path.resolve();
@@ -31,6 +32,7 @@ module.exports = function serve(stripesConfig, options) {
     const app = express();
     let config = require('../webpack.config.cli.dev'); // eslint-disable-line
 
+    config.plugins.push(new StripesMetaDataPlugin(stripesConfig));
     config.plugins.push(new StripesConfigPlugin(stripesConfig));
     config.plugins.push(new StripesBrandingPlugin(stripesConfig.branding));
 
