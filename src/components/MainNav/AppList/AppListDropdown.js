@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import AppIcon from '@folio/stripes-components/lib/AppIcon';
 import NavList from '@folio/stripes-components/lib/NavList';
 import NavListSection from '@folio/stripes-components/lib/NavListSection';
+import NavListItem from '@folio/stripes-components/lib/NavListItem';
 import SearchField from '@folio/stripes-components/lib/structures/SearchField';
 import Link from 'react-router-dom/Link';
 import css from './AppList.css';
@@ -50,7 +51,7 @@ class AppListDropdown extends Component {
       }
 
       return (
-        <Link
+        <NavListItem
           onClick={toggleDropdown}
           key={index}
           to={app.href}
@@ -59,7 +60,7 @@ class AppListDropdown extends Component {
           <AppIcon app={app.name} size="small" icon={app.iconData} />
           <span className={css.dropdownListItemLabel}>{ app.displayName }</span>
           { app.description && <span className={css.dropdownListItemDescription}>{ app.description }</span>}
-        </Link>
+        </NavListItem>
       );
     });
 
