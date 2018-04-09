@@ -78,6 +78,7 @@ button.navButton {
 }
 
 .inner {
+  composes: accessibleFocusRoot from "@folio/stripes-components/lib/sharedStyles/AccessibleFocus.css";  /* stylelint-disable-line */
   padding: 4px 0;
   position: relative;
 }
