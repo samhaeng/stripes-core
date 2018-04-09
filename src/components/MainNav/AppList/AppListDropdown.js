@@ -15,6 +15,7 @@ import css from './AppList.css';
 const propTypes = {
   apps: PropTypes.arrayOf(PropTypes.object).isRequired,
   searchfieldId: PropTypes.string.isRequired,
+  dropdownToggleId: PropTypes.string.isRequired,
   toggleDropdown: PropTypes.func.isRequired,
 };
 
@@ -35,7 +36,7 @@ class AppListDropdown extends Component {
   }
 
   render() {
-    const { apps, searchfieldId, toggleDropdown } = this.props;
+    const { apps, searchfieldId, toggleDropdown, dropdownToggleId } = this.props;
     const { query } = this.state;
     let list = apps;
     let activeLink = null;
@@ -86,6 +87,7 @@ class AppListDropdown extends Component {
     return (
       <div className={css.dropdownBody}>
         <header className={css.dropdownHeader}>
+          <input className={css.focusTrap} onFocus={() => document.getElementById(dropdownToggleId).focus()} />
           <SearchField
             value={this.state.query}
             onChange={e => this.setState({ query: e.target.value })}
@@ -100,7 +102,7 @@ class AppListDropdown extends Component {
             {items}
           </NavListSection>
         </NavList>
-        <input className={css.focusTrap} onFocus={() => document.getElementById(searchfieldId).focus()} />
+        <input className={css.focusTrap} onFocus={() => document.getElementById(dropdownToggleId).focus()} />
       </div>
     );
   }
