@@ -7,9 +7,10 @@ import get from 'lodash/get';
 import classnames from 'classnames';
 import debounce from 'lodash/debounce';
 import PropTypes from 'prop-types';
+import isEqual from 'lodash/isEqual';
 import css from './ResizeContainer.css';
 
-const ResizeContainer = ({ className, children, hideAllWidth, offset, items: allItems }) => {
+const ResizeContainer = ({ className, children, hideAllWidth, offset, items: allItems, selectedApp }) => {
   const wrapperRef = useRef(null);
   const [ready, setReady] = useState(false);
   const [hiddenItems, setHiddenItems] = useState([]);
@@ -20,64 +21,63 @@ const ResizeContainer = ({ className, children, hideAllWidth, offset, items: all
     return Object.assign(acc, { [app.id]: createRef(null) });
   }, {}));
 
-  /**
-   * Determine hidden items on mount and resize
-   */
-  const updateHiddenItems = debounce(() => {
-    const shouldHideAll = window.innerWidth <= hideAllWidth;
-    const wrapperEl = wrapperRef.current;
-
-    if (wrapperEl) {
-      const wrapperWidth = wrapperEl.clientWidth;
-
-      const newHiddenItems =
-      // Set all items as hidden
-      shouldHideAll ? Object.keys(refs) :
-
-      // Find items that should be hidden
-        Object.keys(refs).reduce((acc, id) => {
-          const itemWidth = cachedItemWidths[id];
-          const shouldBeHidden = (itemWidth + acc.accWidth + offset) > wrapperWidth;
-          const hidden = shouldBeHidden ? acc.hidden.concat(id) : acc.hidden;
-
-          return {
-            hidden,
-            accWidth: acc.accWidth + itemWidth,
-          };
-        }, {
-          hidden: [],
-          accWidth: 0,
-        }).hidden;
-
-      setHiddenItems(newHiddenItems);
-
-      // We are hiding the content until we are finished setting hidden items (if any)
-      // Setting ready will make the contents visible for the user
-      if (!ready) {
-        setReady(true);
-      }
-    }
-  }, 150);
+  // Cache menu item widths on mount since they won't change unless the MainNav is re-mounted
+  // Remounting will happen when the locale is changed and the item widths will update accordingly
+  useEffect(() => {
+    setCachedItemWidths(Object.keys(refs).reduce((acc, id) => Object.assign(acc, { [id]: get(refs, `${id}.current.clientWidth`) }), {}));
+  }, [refs]);
 
   useEffect(() => {
-    // Cache menu item widths on mount since it's unlikely they will change
-    setCachedItemWidths(Object.keys(refs).reduce((acc, id) => Object.assign(acc, { [id]: get(refs, `${id}.current.clientWidth`) }), {}));
+    // Determine hidden items on mount and resize
+    const updateHiddenItems = debounce(() => {
+      const shouldHideAll = window.innerWidth <= hideAllWidth;
+      const wrapperEl = wrapperRef.current;
 
+      if (wrapperEl) {
+        const wrapperWidth = wrapperEl.clientWidth;
+
+        const newHiddenItems =
+        // Set all items as hidden
+        shouldHideAll ? Object.keys(refs) :
+
+        // Find items that should be hidden
+          Object.keys(refs).reduce((acc, id) => {
+            const itemWidth = cachedItemWidths[id];
+            const shouldBeHidden = (itemWidth + acc.accWidth + offset) > wrapperWidth;
+            const hidden = shouldBeHidden ? acc.hidden.concat(id) : acc.hidden;
+
+            return {
+              hidden,
+              accWidth: acc.accWidth + itemWidth,
+            };
+          }, {
+            hidden: [],
+            accWidth: 0,
+          }).hidden;
+
+        if (!isEqual(newHiddenItems, hiddenItems)) {
+          setHiddenItems(newHiddenItems);
+        }
+
+        // We are hiding the content until we are finished setting hidden items (if any)
+        // Setting ready will make the contents visible for the user
+        if (!ready) {
+          setReady(true);
+        }
+      }
+    }, 150);
+
+    // Determine hidden items
+    updateHiddenItems();
+
+    // On resize
+    window.addEventListener('resize', updateHiddenItems, true);
+
+    // Clean up
     return () => {
       window.removeEventListener('resize', updateHiddenItems, true);
     };
-  }, []);
-
-  // Wait until widths has been cached before determining hidden items
-  useEffect(() => {
-    if (Object.keys(cachedItemWidths).length) {
-      // Determine hidden items
-      updateHiddenItems();
-
-      // On resize
-      window.addEventListener('resize', updateHiddenItems, true);
-    }
-  }, [cachedItemWidths]);
+  }, [cachedItemWidths, hideAllWidth, offset, ready, refs, selectedApp, hiddenItems]);
 
   return (
     <div
@@ -103,6 +103,7 @@ ResizeContainer.propTypes = {
   hideAllWidth: PropTypes.number,
   items: PropTypes.arrayOf(PropTypes.object),
   offset: PropTypes.number,
+  selectedApp: PropTypes.object
 };
 
 ResizeContainer.defaultProps = {

@@ -200,7 +200,7 @@ class AppList extends Component {
   }
 
   render() {
-    const { apps } = this.props;
+    const { apps, selectedApp } = this.props;
 
     // If no apps are installed
     if (!apps.length) {
@@ -208,7 +208,7 @@ class AppList extends Component {
     }
 
     return (
-      <ResizeContainer items={apps} hideAllWidth={767}>
+      <ResizeContainer selectedApp={selectedApp} items={apps} hideAllWidth={767}>
         {({ refs, hiddenItems, itemWidths }) => {
           return (
             <nav className={css.appList} aria-labelledby="main_app_list_label" data-test-app-list>
